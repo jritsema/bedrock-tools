@@ -1,6 +1,6 @@
 import unittest
-from bedrock_tools import BedrockTools
 import json
+from bedrock_tools import BedrockTools
 
 
 class TestBedrockTools(unittest.TestCase):
@@ -50,7 +50,19 @@ class TestBedrockTools(unittest.TestCase):
                 self.assertEqual(p["type"], "number")
 
         self.assertEqual(spec["inputSchema"]["json"]
-                         ["required"], ["param1", "param2", "param3", "param4"])
+                         ["required"], ["param1", "param2", "param3",])
+
+    def test_generate_tool_spec_required(self):
+
+        def sample_function(param1: str, param2: int, param3: bool = True, param4: float = 0.0):
+            """Sample function with some required parameters."""
+            pass
+
+        spec = self.generator._generate_tool_spec(sample_function)
+        print(json.dumps(spec, indent=2))
+
+        self.assertEqual(spec["inputSchema"]["json"]
+                         ["required"], ["param1", "param2",])
 
     def test_generate_tool_spec_list_string(self):
 

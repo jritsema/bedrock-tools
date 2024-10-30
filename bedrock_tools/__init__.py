@@ -1,5 +1,6 @@
 import inspect
 import logging
+import json
 from pydantic import create_model
 from typing import get_type_hints, Callable, Any
 
@@ -36,20 +37,25 @@ class BedrockTools:
         # Remove the return type hint if present
         type_hints.pop('return', None)
 
-        # Create a Pydantic model dynamically
-        model_fields = {name: (typ, ...) for name, typ in type_hints.items()}
-        # model = create_model(func_name, __config__={"arbitrary_types_allowed": True}, **model_fields)
+        # Get the function's signature
+        sig = inspect.signature(func)
+
+        # Create model fields based on type hints and default values
+        model_fields = {}
+        for name, param in sig.parameters.items():
+            typ = type_hints.get(name, Any)
+            if param.default is param.empty:
+                # No default value, mark as required
+                model_fields[name] = (typ, ...)
+            else:
+                # Has a default value, not required
+                model_fields[name] = (typ, param.default)
+
+        # Create the Pydantic model
         model = create_model(func_name, **model_fields)
 
         # Generate JSON schema
         schema = model.model_json_schema()
-
-        # todo: consider adding a property description if it helps the model
-        # e.g.
-        # "param1": {
-        #   "type": "string",
-        #   "description": "Parameter param1 of type string"
-        # },
 
         return {
             "name": func_name,
