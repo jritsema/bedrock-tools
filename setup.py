@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='bedrock-tools',
-    version='0.2.0',
+    version='0.2.1',
     packages=find_packages(),
     author='John Ritsema',
     author_email='john_ritsema@yahoo.com',
