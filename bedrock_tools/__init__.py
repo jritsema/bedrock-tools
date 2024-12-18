@@ -57,6 +57,10 @@ class BedrockTools:
         # Generate JSON schema
         schema = model.model_json_schema()
 
+        req = []
+        if "required" in schema:
+            req = schema["required"]
+
         return {
             "name": func_name,
             "description": docstring,
@@ -64,7 +68,7 @@ class BedrockTools:
                 "json": {
                     "type": schema["type"],
                     "properties": schema["properties"],
-                    "required": schema["required"]
+                    "required": req,
                 }
             }
         }
