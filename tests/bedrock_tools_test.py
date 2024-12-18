@@ -64,6 +64,17 @@ class TestBedrockTools(unittest.TestCase):
         self.assertEqual(spec["inputSchema"]["json"]
                          ["required"], ["param1", "param2",])
 
+    def test_generate_tool_spec_no_parameters(self):
+
+        def sample_function():
+            """Sample function with no parameters."""
+            pass
+
+        spec = self.generator._generate_tool_spec(sample_function)
+        print(json.dumps(spec, indent=2))
+
+        self.assertEqual(spec["inputSchema"]["json"]["required"], [])
+
     def test_generate_tool_spec_list_string(self):
 
         def complex_func(this_is_a_list_of_strings: list[str]):
